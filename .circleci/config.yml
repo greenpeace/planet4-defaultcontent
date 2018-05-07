@@ -1,0 +1,276 @@
+defaults: &defaults
+  docker:
+    - image: gcr.io/planet-4-151612/p4-builder:develop
+  working_directory:  /home/circleci/
+
+version: 2
+
+jobs:
+  build-develop:
+    <<: *defaults
+    environment:
+      APP_HOSTPATH: defaultcontent
+      CONTAINER_PREFIX: planet4-defaultcontent
+      GOOGLE_PROJECT_ID: planet-4-151612
+      INFRA_VERSION: develop
+    steps:
+      - setup_remote_docker
+
+      - run:
+          name: Configure
+          command: |
+            ${HOME}/scripts/activate-gcloud-account.sh
+            mkdir -p /tmp/workspace/var
+            echo "${CIRCLE_BUILD_NUM}" > /tmp/workspace/var/circle-build-num
+
+      - run:
+          name: Build
+          working_directory: /home/circleci
+          command: |
+            make
+
+      - persist_to_workspace:
+          root: /tmp/workspace
+          paths:
+            - var
+
+  # test:
+  #   <<: *defaults
+  #   steps:
+  #     - run:
+  #         name: Placeholder
+  #         command: |
+  #           echo "Branch: ${CIRCLE_BRANCH}"
+  #           echo "Build:  ${CIRCLE_BUILD_NUM}"
+  #           echo "Tag:    ${CIRCLE_TAG}"
+  #           echo "No tests implemented yet"
+
+  deploy-develop:
+    <<: *defaults
+    environment:
+      APP_HOSTPATH: defaultcontent
+      CONTAINER_PREFIX: planet4-defaultcontent
+      GOOGLE_PROJECT_ID: planet-4-151612
+      INFRA_VERSION: develop
+    steps:
+      - attach_workspace:
+          at: /tmp/workspace
+
+      - run:
+          name: Configure
+          command: |
+            ${HOME}/scripts/activate-gcloud-account.sh
+
+      - run:
+          name: Deploy new containers
+          environment:
+            NEWRELIC_APPNAME: Planet4 Default Content Development
+          command: |
+            export BUILD_TAG=build-$(cat /tmp/workspace/var/circle-build-num)
+            make deploy
+
+  build-release:
+    <<: *defaults
+    environment:
+      APP_HOSTPATH: defaultcontent
+      CONTAINER_PREFIX: planet4-defaultcontent
+      GOOGLE_PROJECT_ID: planet4-production
+      GCLOUD_CLUSTER: planet4-production
+      INFRA_VERSION: develop
+      HELM_NAMESPACE: release
+    steps:
+      - setup_remote_docker
+
+      - run:
+          name: Configure
+          command: |
+            ${HOME}/scripts/activate-gcloud-account.sh
+            mkdir -p /tmp/workspace/var
+            echo "${CIRCLE_BUILD_NUM}" > /tmp/workspace/var/circle-build-num
+
+      - run:
+          name: Build
+          working_directory: /home/circleci
+          command: |
+            make
+
+      - persist_to_workspace:
+          root: /tmp/workspace
+          paths:
+            - var
+
+  # test-release:
+  #   <<: *defaults
+  #   steps:
+  #     - run:
+  #         name: Placeholder
+  #         command: |
+  #           echo "Branch: ${CIRCLE_BRANCH}"
+  #           echo "Build:  ${CIRCLE_BUILD_NUM}"
+  #           echo "Tag:    ${CIRCLE_TAG}"
+  #           echo "No tests implemented yet"
+
+  deploy-release:
+    <<: *defaults
+    environment:
+      APP_HOSTPATH: defaultcontent
+      CONTAINER_PREFIX: planet4-defaultcontent
+      GOOGLE_PROJECT_ID: planet4-production
+      GCLOUD_CLUSTER: planet4-production
+      INFRA_VERSION: develop
+      HELM_NAMESPACE: release
+    steps:
+      - attach_workspace:
+          at: /tmp/workspace
+
+      - run:
+          name: Configure
+          command: |
+            ${HOME}/scripts/activate-gcloud-account.sh
+
+      - run:
+          name: Deploy new containers
+          environment:
+            NEWRELIC_APPNAME: Planet4 Default Content Development
+            HELM_NAMESPACE: release
+          command: |
+            export BUILD_TAG=build-$(cat /tmp/workspace/var/circle-build-num)
+            make deploy
+
+  build-tag:
+    <<: *defaults
+    environment:
+      APP_HOSTPATH: defaultcontent
+      CONTAINER_PREFIX: planet4-defaultcontent
+      GOOGLE_PROJECT_ID: planet4-production
+      GCLOUD_CLUSTER: planet4-production
+      INFRA_VERSION: develop
+      HELM_NAMESPACE: master
+    steps:
+      - setup_remote_docker
+
+      - run:
+          name: Configure
+          command: |
+            ${HOME}/scripts/activate-gcloud-account.sh
+            mkdir -p /tmp/workspace/var
+            echo "${CIRCLE_BUILD_NUM}" > /tmp/workspace/var/circle-build-num
+
+      - run:
+          name: Build
+          working_directory: /home/circleci
+          command: |
+            make
+
+      - persist_to_workspace:
+          root: /tmp/workspace
+          paths:
+            - var
+
+  # test-tag:
+  #   <<: *defaults
+  #   steps:
+  #     - run:
+  #         name: Placeholder
+  #         command: |
+  #           echo "Branch: ${CIRCLE_BRANCH}"
+  #           echo "Build:  ${CIRCLE_BUILD_NUM}"
+  #           echo "Tag:    ${CIRCLE_TAG}"
+  #           echo "No tests implemented yet"
+
+  deploy-tag:
+    <<: *defaults
+    environment:
+      APP_HOSTPATH: defaultcontent
+      CONTAINER_PREFIX: planet4-defaultcontent
+      GOOGLE_PROJECT_ID: planet4-production
+      GCLOUD_CLUSTER: planet4-production
+      INFRA_VERSION: develop
+      HELM_NAMESPACE: master
+    steps:
+      - attach_workspace:
+          at: /tmp/workspace
+
+      - run:
+          name: Configure
+          command: |
+            ${HOME}/scripts/activate-gcloud-account.sh
+
+      - run:
+          name: Deploy new containers
+          environment:
+            NEWRELIC_APPNAME: Planet4 Default Content
+            HELM_NAMESPACE: master
+          command: |
+            export BUILD_TAG=build-$(cat /tmp/workspace/var/circle-build-num)
+            make deploy
+
+workflows:
+  version: 2
+  develop:
+    jobs:
+    - build-develop:
+        context: org-global
+        filters:
+          branches:
+            only: develop
+          tags:
+            ignore: /^v.*/
+
+    - deploy-develop:
+        context: org-global
+        requires:
+          - build-develop
+        filters:
+          branches:
+            only: develop
+
+  release:
+    jobs:
+    - build-release:
+        context: org-global
+        filters:
+          branches:
+            only: /^release.*/
+          tags:
+            ignore: /^v.*/
+
+    - deploy-release:
+        context: org-global
+        requires:
+          - build-release
+        filters:
+          branches:
+            only: /^release.*/
+          tags:
+            ignore: /^v.*/
+
+  tag:
+    jobs:
+      - build-tag:
+          context: org-global
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /^v.*/
+
+      - hold-tag:
+          type: approval
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /^v.*/
+          requires:
+            - build-tag
+
+      - deploy-tag:
+          context: org-global
+          requires:
+            - hold-tag
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /^v.*/

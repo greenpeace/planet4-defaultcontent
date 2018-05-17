@@ -32,7 +32,7 @@ jobs:
           name: Build
           working_directory: /home/circleci
           command: |
-                        if make
+            if make
             then
               TYPE="Build" ${HOME}/scripts/notify-job-success.sh
             else

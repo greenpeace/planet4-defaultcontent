@@ -5,12 +5,26 @@ This repository describes the website running at [https://k8s.p4.greenpeace.org/
 ---
 
 ## Updating Saved Content
+Prerequisites: 
+1. You have access to the google cloud project where the database of the defaultcontent site lives
+1. You have Google Cloud SDK installed on your computer
+1. You have authorised Google Cloud SDK (with the command `gcloud auth login` and following the instructions)
+1. You have switched to the correct GCP project (with the command `gcloud config set project PROJECT_ID`)
 
-To update the stored content, create and populate the file `secrets/env` with values based on `secrets/env.example` and then run `make`, optionally setting the environment variable `SQL_TAG`. For example:
+To update the stored content, 
+1. Make sure you have a cloudSQL account. If you dont then: in the GCP project where the database for this site lives,
+   1. Go to SQL (from the right side)
+   1. Click on the instance where the database lives
+   1. Go to "Users"
+   1. Create user account 
+1. Create and populate the file `secrets/env` with values based on `secrets/env.example`. More specifically copy username and password in the fields CLOUDSQL_USER and CLOUDSQL_PASSWORD in the `secrets/env` file.
 
+1.  Run `make`, optionally setting the environment variable `SQL_TAG`. For example:
  ```SQL_TAG=0.1.1 make -j2```
 
  If SQL_TAG is not set, you will be prompted to enter a semantic version number.
+ 
+ You can see the latest tag used at the `SOURCE_CONTENT_SQLDUMP` parameter of https://github.com/greenpeace/planet4-nro-generator/blob/develop/Dockerfile 
 
  Note that `roles/cloudsql.viewer` [CloudSQL Client permissions](https://cloud.google.com/sql/docs/mysql/project-access-control) and `roles/storage.objectAdmin` [Cloud Storage permissions](https://cloud.google.com/storage/docs/access-control/iam-roles) are required.
 

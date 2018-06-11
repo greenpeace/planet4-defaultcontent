@@ -10,7 +10,13 @@ Prerequisites:
 1. You have Google Cloud SDK installed on your computer
 1. You have authorised Google Cloud SDK (with the command `gcloud auth login` and following the instructions)
 1. You have switched to the correct GCP project (with the command `gcloud config set project PROJECT_ID`)
-
+1. You have installed and configured [Cloud SQL proxy](https://cloud.google.com/sql/docs/mysql/quickstart-proxy-test)
+   1. Download the proxy, and make it executable
+   1. Find out the cloud SQL instance production name (instructions also in the above link)
+   1. Add the proxy commands path to your path, so that it can be run directly from the script (confirm it by trying to run `cloud_sql_proxy` from your shell)
+   1. Start the proxy ( ` ./cloud_sql_proxy -instances=<INSTANCE_CONNECTION_NAME>=tcp:3306 ` ) (where `INSTANCE_CONNECTION_NAME` you can find from following the directions from the section `Get the instance connection name` in the above link)
+   
+   
 To update the stored content, 
 1. Make sure you have a cloudSQL account. If you dont then: in the GCP project where the database for this site lives,
    1. Go to SQL (from the right side)

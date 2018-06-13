@@ -14,8 +14,6 @@ Prerequisites:
    1. Download the proxy, and make it executable
    1. Find out the cloud SQL instance production name (instructions also in the above link)
    1. Add the proxy commands path to your path, so that it can be run directly from the script (confirm it by trying to run `cloud_sql_proxy` from your shell)
-   1. Start the proxy ( ` ./cloud_sql_proxy -instances=<INSTANCE_CONNECTION_NAME>=tcp:3306 ` ) (where `INSTANCE_CONNECTION_NAME` you can find from following the directions from the section `Get the instance connection name` in the above link)
-   
    
 To update the stored content, 
 1. Make sure you have a cloudSQL account. If you dont then: in the GCP project where the database for this site lives,

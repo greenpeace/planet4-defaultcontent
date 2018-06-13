@@ -3,7 +3,7 @@ SHELL := /bin/bash
 include secrets/env
 export $(shell sed 's/=.*//' secrets/env)
 
-CLOUDSQL_INSTANCE	?= planet-4-151612:us-central1:p4-develop-k8s
+CLOUDSQL_INSTANCE	  ?= planet-4-151612:us-central1:p4-develop-k8s
 
 CLOUDSQL_USER 			?= root
 CLOUDSQL_PASSWORD 	?=

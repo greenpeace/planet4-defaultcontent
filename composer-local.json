@@ -6,9 +6,6 @@
 	},
 
 	"scripts": {
-		"install:searchwp": "wp plugin install https://raw.githubusercontent.com/greenpeace/planet4-3rdparty-plugins/master/searchwp-2.9.13.zip --activate",
-		"site:custom" : [
-			"@install:searchwp"
-		]
+		"site:custom" : []
 	}
 }

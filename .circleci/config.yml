@@ -93,7 +93,7 @@ jobs:
       - run:
           name: Create new sql
           command: SQL_TAG=$CIRCLE_TAG make -j2
-       - run: echo "done"
+      - run: echo "done"
 
 workflows:
   version: 2

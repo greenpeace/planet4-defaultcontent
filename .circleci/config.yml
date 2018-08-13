@@ -90,9 +90,7 @@ jobs:
       - image: gcr.io/planet-4-151612/circleci-base:latest
     steps:
       - checkout
-      - run:
-          name: Create new sql
-          command: SQL_TAG=$CIRCLE_TAG make -j2
+      - run: SQL_TAG=$CIRCLE_TAG make -j2
       - run: echo "done"
 
 workflows:

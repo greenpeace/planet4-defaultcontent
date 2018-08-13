@@ -19,8 +19,8 @@ echo ""
 echo "mysqldump planet4-defaultcontent_wordpress > content/planet4-defaultcontent_wordpress-v${SQL_TAG}.sql ..."
 echo ""
 mysqldump -v \
-  -u "$(echo "${WP_DB_USERNAME}" | | base64 -d)" \
-  -p"$(echo "${WP_DB_PASSWORD}" | | base64 -d)" \
+  -u "$(echo "${WP_DB_USERNAME}" | base64 -d)" \
+  -p"$(echo "${WP_DB_PASSWORD}" | base64 -d)" \
   -h 127.0.0.1 \
   planet4-defaultcontent_wordpress > "content/planet4-defaultcontent_wordpress-v${SQL_TAG}.sql"
 

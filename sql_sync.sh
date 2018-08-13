@@ -6,9 +6,14 @@ function finish {
   kill "$(jobs -p)"
 }
 
+WP_DB_USERNAME_DC=$(echo "${WP_DB_USERNAME}" | base64 -d)
+WP_DB_PASSWORD_DC=$(echo "${WP_DB_PASSWORD}" | base64 -d)
+WP_STATELESS_KEY_DC=$(echo "${WP_STATELESS_KEY}" | base64 -d)
+CLOUDSQL_INSTANCE=planet-4-151612:us-central1:p4-develop-k8s
+export GOOGLE_APPLICATION_CREDENTIALS="/home/circleci/project/key.json"
+
 trap finish EXIT
 cloud_sql_proxy \
-  --credential_file=key.json
   -instances="${CLOUDSQL_INSTANCE}=tcp:3306" &
 
 mkdir -p content
@@ -19,8 +24,8 @@ echo ""
 echo "mysqldump planet4-defaultcontent_wordpress > content/planet4-defaultcontent_wordpress-v${SQL_TAG}.sql ..."
 echo ""
 mysqldump -v \
-  -u "$(echo "${WP_DB_USERNAME}" | base64 -d)" \
-  -p"$(echo "${WP_DB_PASSWORD}" | base64 -d)" \
+  -u "$(echo "${WP_DB_USERNAME_DC}" | base64 -d)" \
+  -p"$(echo "${WP_DB_PASSWORD_DC}" | base64 -d)" \
   -h 127.0.0.1 \
   planet4-defaultcontent_wordpress > "content/planet4-defaultcontent_wordpress-v${SQL_TAG}.sql"
 

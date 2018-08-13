@@ -112,10 +112,9 @@ workflows:
         filters:
           branches:
             only: develop
-
+  create-default-sql:
+    jobs:
     - create-default-sql:
-        requires:
-          - create-default-sql
         filters:
           branches:
             ignore: /.*/

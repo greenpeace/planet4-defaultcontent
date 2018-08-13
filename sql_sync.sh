@@ -8,6 +8,7 @@ function finish {
 
 trap finish EXIT
 cloud_sql_proxy \
+  --credential_file=key.json
   -instances="${CLOUDSQL_INSTANCE}=tcp:3306" &
 
 mkdir -p content
@@ -18,8 +19,8 @@ echo ""
 echo "mysqldump planet4-defaultcontent_wordpress > content/planet4-defaultcontent_wordpress-v${SQL_TAG}.sql ..."
 echo ""
 mysqldump -v \
-  -u "${CLOUDSQL_USER}" \
-  -p"${CLOUDSQL_PASSWORD}" \
+  -u "$(echo "${WP_DB_USERNAME}" | base64 -d)" \
+  -p"$(echo "${WP_DB_PASSWORD}" | base64 -d)" \
   -h 127.0.0.1 \
   planet4-defaultcontent_wordpress > "content/planet4-defaultcontent_wordpress-v${SQL_TAG}.sql"
 

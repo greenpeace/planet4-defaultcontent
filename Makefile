@@ -5,13 +5,6 @@ export $(shell sed 's/=.*//' secrets/env)
 
 CLOUDSQL_INSTANCE	  ?= planet-4-151612:us-central1:p4-develop-k8s
 
-CLOUDSQL_USER 			?= root
-CLOUDSQL_PASSWORD 	?=
-
-ifeq ($(strip $(CLOUDSQL_PASSWORD)),)
-$(error Error: CLOUDSQL_PASSWORD not set, please set in environment)
-endif
-
 SQL_TAG ?= $(shell bash -c 'read -p "Please enter SQL version tag: " tag; echo $$tag')
 
 BUCKET_SOURCE 			?= gs://planet4-defaultcontent-stateless-develop

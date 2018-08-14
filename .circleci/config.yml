@@ -88,8 +88,14 @@ jobs:
   create-default-sql:
     docker:
       - image: gcr.io/planet-4-151612/circleci-base:latest
+    environment:
+      CLOUDSQL_INSTANCE: p4-develop-k8s
+      CONTAINER_PREFIX: planet4-defaultcontent
+      GOOGLE_PROJECT_ID: planet-4-151612
+      WP_DB_NAME: planet4-defaultcontent_wordpress
     steps:
       - checkout
+      - run: activate-gcloud-account.sh
       - run: echo $SQLPROXY_KEY | base64 -d > key.json
       - run: SQL_TAG=$CIRCLE_TAG make -j2
       - run: echo "done"

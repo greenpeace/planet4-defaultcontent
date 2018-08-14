@@ -89,10 +89,16 @@ jobs:
     docker:
       - image: gcr.io/planet-4-151612/circleci-base:latest
     environment:
+      APP_HOSTNAME: k8s.p4.greenpeace.org
+      APP_HOSTPATH: defaultcontent
       CLOUDSQL_INSTANCE: p4-develop-k8s
       CONTAINER_PREFIX: planet4-defaultcontent
       GOOGLE_PROJECT_ID: planet-4-151612
+      HELM_NAMESPACE: develop
+      INFRA_VERSION: develop
+      NEWRELIC_APPNAME: Planet4 Default Content Development
       WP_DB_NAME: planet4-defaultcontent_wordpress
+      WP_TITLE: Greenpeace Default Content
     steps:
       - checkout
       - attach_workspace:

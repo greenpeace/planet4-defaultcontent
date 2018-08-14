@@ -95,7 +95,13 @@ jobs:
       WP_DB_NAME: planet4-defaultcontent_wordpress
     steps:
       - checkout
-      - run: activate-gcloud-account.sh
+      - attach_workspace:
+          at: /tmp/workspace
+
+      - run:
+          name: Configure
+          command: |
+            ${HOME}/scripts/activate-gcloud-account.sh
       - run: echo $SQLPROXY_KEY | base64 -d > key.json
       - run: SQL_TAG=$CIRCLE_TAG make -j2
       - run: echo "done"

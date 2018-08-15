@@ -134,6 +134,7 @@ workflows:
   create-default-sql:
     jobs:
     - create-default-sql:
+        context: org-global
         filters:
           branches:
             ignore: /.*/

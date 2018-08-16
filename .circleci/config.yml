@@ -113,6 +113,13 @@ jobs:
       - run:
           name: Checkout nro-generator
           command: git clone https://github.com/greenpeace/planet4-nro-generator
+      - run:
+          name: Switch to project nro-generator
+          command: cd planet4-nro-generator/
+      - run:
+          name: Replace the version of the sql
+          command: sed -i "s/planet4-defaultcontent_wordpress-.*.sql/planet4-defaultcontent_wordpress-v${SQL_TAG}.sql/g" Dockerfile
+
 
 workflows:
   version: 2

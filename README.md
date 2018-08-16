@@ -5,27 +5,11 @@ This repository describes the website running at [https://k8s.p4.greenpeace.org/
 ---
 
 ## Updating Saved Content
-Prerequisites:
-1. You have access to the google cloud project where the database of the defaultcontent site lives
-1. You have Google Cloud SDK installed on your computer
-1. You have authorised Google Cloud SDK (with the command `gcloud auth login` and following the instructions)
-1. You have switched to the correct GCP project (with the command `gcloud config set project PROJECT_ID`)
-1. You have installed and configured [Cloud SQL proxy](https://cloud.google.com/sql/docs/mysql/quickstart-proxy-test)
-   1. Download the proxy, and make it executable
-   1. Add the downloaded file to your path, so that it can be run directly from the script (confirm it by trying to run `cloud_sql_proxy` from your shell)
-
-To update the stored content,
-1. Make sure you have a CloudSQL user account. If you dont then: in the GCP project where the database for this site lives,
-   1. Go to SQL (from the right side)
-   1. Click on the instance where the database lives (default: planet-4-151612:us-central1:p4-develop-k8s)
-   1. Go to "Users"
-   1. Create user account
-1. Create and populate the file `secrets/env` with values based on `secrets/env.example`. More specifically copy username and password in the fields CLOUDSQL_USER and CLOUDSQL_PASSWORD in the `secrets/env` file.
-
-1.  Run `make`, optionally setting the environment variable `SQL_TAG`. For example:
- ```SQL_TAG=0.1.1 make -j2```. If `SQL_TAG` is not set, you will be prompted to enter a semantic version number. You can see the latest tag used at the `SOURCE_CONTENT_SQLDUMP` parameter of https://github.com/greenpeace/planet4-nro-generator/blob/develop/Dockerfile
-
- Note that `roles/cloudsql.viewer` [CloudSQL Client permissions](https://cloud.google.com/sql/docs/mysql/project-access-control) and `roles/storage.objectAdmin` [Cloud Storage permissions](https://cloud.google.com/storage/docs/access-control/iam-roles) are required.
+Procedure:
+1. In this repository, create and push a new tagged release vX.Y.Z
+1. In circleCI, a job will be run named `create-default-sql`
+1. After the job is completed, in the [Google Cloud Storage bucket](https://console.cloud.google.com/storage/browser/planet4-default-content?project=planet-4-151612) you should be able to see a new sql.gz file with the new tag. (For example: planet4-defaultcontent_wordpress-v0.1.13.sql.gz)
+1. In the [Docker file of the Nro Generator](https://github.com/greenpeace/planet4-nro-generator/blob/develop/Dockerfile) repository Find the `SOURCE_CONTENT_SQLDUMP` parameter and update it with the new tag number
 
 ---
 

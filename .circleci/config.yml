@@ -110,7 +110,9 @@ jobs:
             ${HOME}/scripts/activate-gcloud-account.sh
       - run: echo $SQLPROXY_KEY | base64 -d > key.json
       - run: SQL_TAG=$CIRCLE_TAG make -j2
-      - run: echo "done"
+      - run:
+          name: Checkout nro-generator
+          command: git clone https://github.com/greenpeace/planet4-nro-generator
 
 workflows:
   version: 2

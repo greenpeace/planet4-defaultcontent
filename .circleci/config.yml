@@ -122,9 +122,9 @@ jobs:
       - run:
           name: Commit the change
           command: git commit -m "${SQL_TAG} version of the sql to use" Dockerfile
-       - run:
-           name: Push the commit
-           command: git push
+      - run:
+          name: Push the commit
+          command: git push
 
 workflows:
   version: 2

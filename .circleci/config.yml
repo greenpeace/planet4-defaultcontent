@@ -118,10 +118,10 @@ jobs:
           command: cd /home/circleci/project/planet4-nro-generator
       - run:
           name: Replace the version of the sql
-          command: sed -i "s/planet4-defaultcontent_wordpress-.*.sql/planet4-defaultcontent_wordpress-v${SQL_TAG}.sql/g" Dockerfile
+          command: sed -i "s/planet4-defaultcontent_wordpress-.*.sql/planet4-defaultcontent_wordpress-v${CIRCLE_TAG}.sql/g" Dockerfile
       - run:
           name: Commit the change
-          command: git commit -m "${SQL_TAG} version of the sql to use" Dockerfile
+          command: git commit -m "${CIRCLE_TAG} version of the sql to use" Dockerfile
       - run:
           name: Push the commit
           command: git push

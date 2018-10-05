@@ -1,7 +1,7 @@
-export PROJECT_NRO_GEN_PATH = /home/circleci/project/planet4-nro-generator/
+export PROJECT_NRO_GEN_PATH=/home/circleci/project/planet4-nro-generator/
 
-git --global config user.email "circleci-bot@greenpeace.org"
-git --global config user.name "CircleCI Bot"
+git config --global user.email "circleci-bot@greenpeace.org"
+git config --global user.name "CircleCI Bot"
 
 git clone https://github.com/greenpeace/planet4-nro-generator
 

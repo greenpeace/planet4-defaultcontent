@@ -5,6 +5,7 @@ echo "Adding git user email and user name"
 echo ""
 git config --global user.email "circleci-bot@greenpeace.org"
 git config --global user.name "CircleCI Bot"
+git config --global push.default simple
 
 echo ""
 echo "Cloning the planet4-nro-generator repository"

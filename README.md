@@ -8,9 +8,6 @@ This repository describes the website running at [https://k8s.p4.greenpeace.org/
 Procedure:
 1. In this repository, create and push a new tagged release vX.Y.Z
 1. In circleCI, a job will be run named `create-default-sql`
-1. After the job is completed, in the [Google Cloud Storage bucket](https://console.cloud.google.com/storage/browser/planet4-default-content?project=planet-4-151612) you should be able to see a new sql.gz file with the new tag. (For example: planet4-defaultcontent_wordpress-v0.1.13.sql.gz)
-1. In the [Docker file of the Nro Generator](https://github.com/greenpeace/planet4-nro-generator/blob/develop/Dockerfile) repository Find the `SOURCE_CONTENT_SQLDUMP` parameter and update it with the new tag number
-
 ---
 
 ## Post-install Procedures

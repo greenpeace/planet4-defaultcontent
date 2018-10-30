@@ -1,6 +1,7 @@
 {
 	"name": "planet4-defaultcontent/planet4-defaultcontent",
-
+	"description": "Greenpeace P4 Default Content",
+	"license": "MIT",
 	"require": {
 	},
 

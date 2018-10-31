@@ -17,10 +17,31 @@ job_environments:
     GCLOUD_CLUSTER: p4-development
     HELM_NAMESPACE: develop
     HELM_RELEASE: planet4-defaultcontent
-    NEWRELIC_APPNAME: P4 Japan Development
+    NEWRELIC_APPNAME: P4 Defaultcontent Development
     WP_DB_NAME: planet4-defaultcontent_wordpress
     WP_STATELESS_BUCKET: planet4-defaultcontent-stateless-develop
-
+  release_environment: &release_environment
+    APP_ENVIRONMENT: staging
+    APP_HOSTNAME: release.k8s.p4.greenpeace.org
+    CLOUDSQL_INSTANCE: planet4-prod
+    GCLOUD_CLUSTER: planet4-production
+    GOOGLE_PROJECT_ID: planet4-production
+    HELM_NAMESPACE: defaultcontent
+    HELM_RELEASE: planet4-defaultcontent-release
+    NEWRELIC_APPNAME: P4 Defaultcontent Release
+    WP_DB_NAME: planet4-defaultcontent_wordpress_release
+    WP_STATELESS_BUCKET: planet4-defaultcontent-stateless-release
+  production_environment: &production_environment
+    APP_HOSTNAME: master.k8s.p4.greenpeace.org
+    CLOUDSQL_INSTANCE: planet4-prod
+    GCLOUD_CLUSTER: planet4-production
+    GOOGLE_PROJECT_ID: planet4-production
+    HELM_NAMESPACE: defaultcontent
+    HELM_RELEASE: planet4-defaultcontent-master
+    MIN_REPLICA_COUNT: 2
+    NEWRELIC_APPNAME: P4 Defaultcontent Production
+    WP_DB_NAME: planet4-defaultcontent_wordpress_master
+    WP_STATELESS_BUCKET: planet4-defaultcontent-stateless
 
 job_definitions:
   build_steps: &build_steps

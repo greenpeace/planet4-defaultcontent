@@ -297,7 +297,9 @@ workflow_definitions:
       - run:
           name: Update nro-generator with the latest tag
           command: bash update_nro_generator.sh
-
+      - run:
+          name: Update UI Tests environment with the latest tag
+          command: bash update_ui_tests.sh
 
 workflows:
   version: 2
@@ -366,6 +368,7 @@ workflows:
         <<: *sync_common
         requires:
           - sync-sql-to-release
+
   create-default-sql:
     jobs:
     - create-default-sql:
@@ -375,5 +378,3 @@ workflows:
             ignore: /.*/
           tags:
             only: /v.*/
-
-

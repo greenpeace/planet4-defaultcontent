@@ -243,32 +243,7 @@ jobs:
             ${HOME}/scripts/activate-gcloud-account.sh
       - run: echo $SQLPROXY_KEY | base64 -d > key.json
       - run: /home/circleci/sql_to_sync_site.sh develop
-
-workflow_definitions:
-  develop_common: &develop_common
-    context: org-global
-    filters:
-      branches:
-        only: develop
-  release_common: &release_common
-    context: org-global
-    filters:
-      branches:
-        only: /^release.*/
-  tag_common: &tag_common
-    context: org-global
-    filters:
-      branches:
-        ignore: /.*/
-      tags:
-        only: /^v\p{Digit}+\.\p{Digit}+\.\p{Digit}+.*/
-  sync_common: &sync_common
-    context: org-global
-    filters:
-      branches:
-        ignore: /.*/
-      tags:
-        only: /sync.*/
+      
   create-default-sql:
     docker:
       - image: gcr.io/planet-4-151612/circleci-base:latest
@@ -300,6 +275,33 @@ workflow_definitions:
       - run:
           name: Update UI Tests environment with the latest tag
           command: bash update_ui_tests.sh
+
+
+workflow_definitions:
+  develop_common: &develop_common
+    context: org-global
+    filters:
+      branches:
+        only: develop
+  release_common: &release_common
+    context: org-global
+    filters:
+      branches:
+        only: /^release.*/
+  tag_common: &tag_common
+    context: org-global
+    filters:
+      branches:
+        ignore: /.*/
+      tags:
+        only: /^v\p{Digit}+\.\p{Digit}+\.\p{Digit}+.*/
+  sync_common: &sync_common
+    context: org-global
+    filters:
+      branches:
+        ignore: /.*/
+      tags:
+        only: /sync.*/
 
 workflows:
   version: 2

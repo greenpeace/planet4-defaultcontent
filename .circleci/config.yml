@@ -272,9 +272,6 @@ jobs:
       - run:
           name: Update nro-generator with the latest tag
           command: bash update_nro_generator.sh
-      - run:
-          name: Update UI Tests environment with the latest tag
-          command: bash update_ui_tests.sh
 
 
 workflow_definitions:

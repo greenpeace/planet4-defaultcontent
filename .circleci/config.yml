@@ -272,7 +272,9 @@ jobs:
       - run:
           name: Update nro-generator with the latest tag
           command: bash update_nro_generator.sh
-
+      - run:
+          name: Update docker-compose with the latest tag
+          command: bash update_docker_compose.sh
 
 workflow_definitions:
   develop_common: &develop_common

@@ -41,3 +41,8 @@ echo ""
 gsutil cp "content/planet4-defaultcontent_wordpress-${SQL_TAG}.sql.gz" "${BUCKET_DESTINATION}/"
 
 gsutil ls "${BUCKET_DESTINATION}/"
+
+echo ""
+echo "Making the file readable"
+echo ""
+gsutil acl ch -u AllUsers:R "${BUCKET_DESTINATION}/planet4-defaultcontent_wordpress-${SQL_TAG}.sql.gz"

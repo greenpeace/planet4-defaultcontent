@@ -16,7 +16,7 @@ echo ""
 echo "Replacing the previous sql file in the Dockerfile tag with the latest one"
 echo ""
 CIRCLE_TAG_NUMBER=${CIRCLE_TAG#"v"}
-sed -i "s/DEFAULTCONTENT_DB_VERSION ?= .*./DEFAULTCONTENT_DB_VERSION ?= ${CIRCLE_TAG_NUMBER}/g" ${PROJECT_DOCKER_COMPOSE_PATH}Makefile
+sed -i "s/CONTENT_DB_VERSION ?= .*./CONTENT_DB_VERSION ?= ${CIRCLE_TAG_NUMBER}/g" ${PROJECT_DOCKER_COMPOSE_PATH}Makefile
 
 echo ""
 echo "Commiting changes in the repository"

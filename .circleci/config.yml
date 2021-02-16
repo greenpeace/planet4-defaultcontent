@@ -159,6 +159,9 @@ jobs:
 
   create-test-data:
     <<: *defaults
+    environment:
+      <<: *common_environment
+      <<: *develop_environment
     steps:
       - checkout
       - attach_workspace:

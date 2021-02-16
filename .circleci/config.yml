@@ -144,7 +144,6 @@ jobs:
       - checkout
       - attach_workspace:
           at: /tmp/workspace
-
       - run:
           name: Configure
           command: |
@@ -157,6 +156,16 @@ jobs:
       - run:
           name: Update docker-compose with the latest tag
           command: bash update_docker_compose.sh
+
+  create-test-data:
+    <<: *defaults
+    steps:
+      - checkout
+      - attach_workspace:
+          at: /tmp/workspace
+      - run: /home/circleci/run_bash_script_in_php_pod.sh ./generate-test-content.sh /tmp/workspace
+      - store_artifacts:
+          path: /tmp/workspace
 
 workflow_definitions:
   develop_common: &develop_common

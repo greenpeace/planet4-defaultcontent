@@ -184,6 +184,10 @@ workflows:
         <<: *develop_common
         requires:
           - build-branch
+    - create-test-data:
+        <<: *develop_common
+        requires:
+          - deploy-develop
 
   create-default-sql:
     jobs:

@@ -176,7 +176,9 @@ jobs:
       - checkout
       - attach_workspace:
           at: /tmp/workspace
-      - run: /home/circleci/run_bash_script_in_php_pod.sh ./generate-test-content.sh /tmp/workspace
+      - run:
+          name: Generate test content
+          command: run_bash_script_in_php_pod.sh ./generate-test-content.sh /tmp/workspace
       - store_artifacts:
           path: /tmp/workspace
 

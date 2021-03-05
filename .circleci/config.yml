@@ -2,8 +2,8 @@
 version: 2.1
 
 docker_auth: &docker_auth
-    username: $DOCKERHUB_USERNAME
-    password: $DOCKERHUB_PASSWORD
+  username: $DOCKERHUB_USERNAME
+  password: $DOCKERHUB_PASSWORD
 
 defaults: &defaults
   docker:
@@ -32,92 +32,102 @@ job_definitions:
   build_steps: &build_steps
     working_directory: ~/
     steps:
-      - setup_remote_docker
+      - setup_remote_docker:
+          docker_layer_caching: true
+      - restore_cache:
+          keys:
+            - composer-v5-{{ .Branch }}-{{ .Revision }}-{{ .BuildNum }}
+            - composer-v5-{{ .Branch }}-{{ .Revision }}
+            - composer-v5-{{ .Branch }}
+            - composer-v5
+      - run: |
+          if [[ -d source/cache ]]; then ls -al source/cache; fi
       - run: activate-gcloud-account.sh
-      - run: mkdir -p /tmp/workspace/var
-      - run: mkdir -p /tmp/workspace/src
+      - run: mkdir -p /tmp/workspace/var /tmp/workspace/src
       - run: echo "${CIRCLE_BUILD_NUM}" > /tmp/workspace/var/circle-build-num
-      - run: make
-      - run:
-          name: Notify failure
-          when: on_fail
-          command: TYPE="Build" notify-job-failure.sh
+      - run: make test
+      - run: make rewrite
+      - run: make checkout
+      - run: make rewrite-app-repos
+      - run: make copy
+      - run: make bake
+      - run: make persist
+      - run: make build
+      - run: make push
+      - save_cache:
+          key: composer-v5-{{ .Branch }}-{{ .Revision }}-{{ .BuildNum }}
+          paths:
+            - source/cache
       - persist_to_workspace:
           root: /tmp/workspace
           paths:
             - var
             - src
 
-  prepare_release: &prepare_release
-    working_directory: /tmp/workspace/src
-    steps:
-      - checkout
-      - attach_workspace:
-          at: /tmp/workspace
-      - run: release-prepare-nro.sh
-      - run:
-          name: Notify failure
-          when: on_fail
-          command: TYPE="Prepare" notify-job-failure.sh
-      - persist_to_workspace:
-          root: /tmp/workspace
-          paths:
-            - var
-            - src
-
-  notify_promote: &notify_promote
+  test_steps: &test_steps
     working_directory: ~/project
+    docker:
+      - image: gcr.io/planet-4-151612/p4-codeception:build-12
+      - name: selenium
+        image: selenium/standalone-chrome-debug:3.141.59-oxygen
+        auth:
+          <<: *docker_auth
     steps:
       - checkout
+      - run: if [ ! -d "tests" ] || [ ! "$(ls -A tests)" ]; then circleci-agent step halt; fi
+      - run: dockerize -wait tcp://selenium:4444
+      - run: codeceptionify.sh .
+      - run: codecept run --xml=junit.xml --html
       - run:
-          name: notify
+          name: Copy test artifacts
+          when: always
           command: |
-            TYPE="@rawalker Promote release/$(increment-version.sh "$(git-current-tag.sh)")" \
-            EXTRA_TEXT="Verify: https://$APP_HOSTNAME/$APP_HOSTPATH" \
-            notify-job-hold.sh
-
-  notify_hold: &notify_hold
-    working_directory: ~/project
-    steps:
-      - checkout
-      - run:
-          name: notify
-          command: |
-            TYPE="@rawalker Hold: ${CIRCLE_TAG}" \
-            EXTRA_TEXT="Verify: https://$APP_HOSTNAME/$APP_HOSTPATH" \
-            notify-job-hold.sh
-
-  finish_release: &finish_release
-    working_directory: /tmp/workspace/src
-    steps:
-      - attach_workspace:
-          at: /tmp/workspace
-      - checkout
-      - run: increment-version.sh "$(git-current-tag.sh)" | tee /tmp/workspace/var/new_release
-      - run: release-finish.sh
-      - run: git push origin --delete release/$(cat /tmp/workspace/var/new_release)
-      - run:
-          name: Notify failure
-          when: on_fail
-          command: TYPE="Promote" notify-job-failure.sh
+            mkdir -p /tmp/artifacts
+            cp -r codeception/_output/. /tmp/artifacts
+      - store_test_results:
+          path: /tmp/artifacts
+      - store_artifacts:
+          path: /tmp/artifacts
 
   deploy_steps: &deploy_steps
     working_directory: ~/
+    parameters:
+      notify:
+        type: boolean
+        default: false
+      is_prod:
+        type: boolean
+        default: false
     steps:
+      - checkout:
+          path: /home/circleci/checkout
       - attach_workspace:
           at: /tmp/workspace
       - run: activate-gcloud-account.sh
-      - run: BUILD_TAG=build-$(cat /tmp/workspace/var/circle-build-num) make -j2 deploy
+      - run: make prepare-helm
+      - run: make backup
+      - run: BUILD_TAG=build-$(cat /tmp/workspace/var/circle-build-num) make deploy-helm
+      - run: make post-deploy
+      - run:
+          name: Extract workflow from commit message
+          command: |
+            UNHOLD_WORKFLOW_LINE=$(git --git-dir=/home/circleci/checkout/.git log --format=%B -n 1 "$CIRCLE_SHA1" | { grep '^\/unhold ' || true; } )
+            echo "line $UNHOLD_WORKFLOW_LINE"
+            if [[ -n $UNHOLD_WORKFLOW_LINE ]]; then
+              WORKFLOW_ID=${UNHOLD_WORKFLOW_LINE#"/unhold "}
+              echo "$WORKFLOW_ID"
+              echo $WORKFLOW_ID > /tmp/workspace/approve_workflow
+            fi
 
 jobs:
-  build-branch:
+  build:
     <<: *defaults
     environment:
       <<: *common_environment
       <<: *develop_environment
     <<: *build_steps
 
-  deploy-develop:
+  deploy:
     <<: *defaults
     environment:
       <<: *common_environment
@@ -147,7 +157,7 @@ jobs:
       - run:
           name: Configure
           command: |
-            ${HOME}/scripts/activate-gcloud-account.sh
+            activate-gcloud-account.sh
       - run: echo $SQLPROXY_KEY | base64 -d > key.json
       - run: SQL_TAG=$CIRCLE_TAG make -j2
       - run:
@@ -175,22 +185,21 @@ workflow_definitions:
     context: org-global
     filters:
       branches:
-        only: develop
+        only: main
 
 workflows:
-  version: 2
   develop:
     jobs:
-    - build-branch:
+    - build:
         <<: *develop_common
-    - deploy-develop:
+    - deploy:
         <<: *develop_common
         requires:
-          - build-branch
+          - build
     - create-test-data:
         <<: *develop_common
         requires:
-          - deploy-develop
+          - deploy
 
   create-default-sql:
     jobs:

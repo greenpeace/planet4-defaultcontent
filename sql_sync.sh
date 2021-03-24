@@ -23,7 +23,7 @@ sleep 2
 echo ""
 echo "mysqldump planet4-defaultcontent_wordpress > content/planet4-defaultcontent_wordpress-${SQL_TAG}.sql ..."
 echo ""
-mysqldump -v --column-statistics=0 \
+mysqldump -v --column-statistics=0 --set-gtid-purged=OFF \
   -u "$WP_DB_USERNAME_DC" \
   -p"$WP_DB_PASSWORD_DC" \
   -h 127.0.0.1 \

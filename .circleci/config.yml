@@ -24,7 +24,6 @@ job_environments:
     GCLOUD_CLUSTER: p4-development
     HELM_NAMESPACE: develop
     HELM_RELEASE: planet4-defaultcontent
-    NEWRELIC_APPNAME: P4 Defaultcontent Development
     WP_DB_NAME: planet4-defaultcontent_wordpress
     WP_STATELESS_BUCKET: planet4-defaultcontent-stateless-develop
 

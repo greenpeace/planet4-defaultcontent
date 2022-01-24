@@ -1,6 +1,6 @@
 # Planet4 Default Content
 
-This repository describes the website running at [https://k8s.p4.greenpeace.org/defaultcontent/](https://k8s.p4.greenpeace.org/defaultcontent/), which provides the base install for Greenpeace Planet 4 of the Wordpress database and corresponding images in gs://planet4-default-content.
+This repository describes the website running at [https://www-dev.greenpeace.org/defaultcontent/](https://www-dev.greenpeace.org/defaultcontent/), which provides the base install for Greenpeace Planet 4 of the Wordpress database and corresponding images in gs://planet4-default-content.
 
 This repo only has a deployment in the P4 development environment, there is no requirement for a release or master deployment.
 

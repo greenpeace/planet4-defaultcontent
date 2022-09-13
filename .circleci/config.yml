@@ -1,16 +1,13 @@
 ---
 version: 2.1
-
 docker_auth: &docker_auth
   username: $DOCKERHUB_USERNAME
   password: $DOCKERHUB_PASSWORD
-
 defaults: &defaults
   docker:
     - image: greenpeaceinternational/p4-builder:latest
       auth:
-        <<: *docker_auth
-
+        !!merge <<: *docker_auth
 job_environments:
   common_environment: &common_environment
     CONTAINER_PREFIX: planet4-defaultcontent
@@ -22,11 +19,10 @@ job_environments:
     CLOUDSQL_INSTANCE: p4-develop-k8s
     GOOGLE_PROJECT_ID: planet-4-151612
     GCLOUD_CLUSTER: p4-development
-    HELM_NAMESPACE: develop
+    HELM_NAMESPACE: defaultcontent
     HELM_RELEASE: planet4-defaultcontent
     WP_DB_NAME: planet4-defaultcontent_wordpress
     WP_STATELESS_BUCKET: planet4-defaultcontent-stateless-develop
-
 job_definitions:
   build_steps: &build_steps
     working_directory: ~/
@@ -62,7 +58,6 @@ job_definitions:
           paths:
             - var
             - src
-
   test_steps: &test_steps
     working_directory: ~/project
     docker:
@@ -70,7 +65,7 @@ job_definitions:
       - name: selenium
         image: selenium/standalone-chrome-debug:3.141.59-oxygen
         auth:
-          <<: *docker_auth
+          !!merge <<: *docker_auth
     steps:
       - checkout
       - run: if [ ! -d "tests" ] || [ ! "$(ls -A tests)" ]; then circleci-agent step halt; fi
@@ -87,7 +82,6 @@ job_definitions:
           path: /tmp/artifacts
       - store_artifacts:
           path: /tmp/artifacts
-
   deploy_steps: &deploy_steps
     working_directory: ~/
     parameters:
@@ -117,27 +111,24 @@ job_definitions:
               echo "$WORKFLOW_ID"
               echo $WORKFLOW_ID > /tmp/workspace/approve_workflow
             fi
-
 jobs:
   build:
-    <<: *defaults
+    !!merge <<: *defaults
     environment:
-      <<: *common_environment
-      <<: *develop_environment
-    <<: *build_steps
-
+      !!merge <<: *common_environment
+      !!merge <<: *develop_environment
+    !!merge <<: *build_steps
   deploy:
-    <<: *defaults
+    !!merge <<: *defaults
     environment:
-      <<: *common_environment
-      <<: *develop_environment
-    <<: *deploy_steps
-
+      !!merge <<: *common_environment
+      !!merge <<: *develop_environment
+    !!merge <<: *deploy_steps
   create-default-sql:
     docker:
       - image: greenpeaceinternational/circleci-base:latest
         auth:
-          <<: *docker_auth
+          !!merge <<: *docker_auth
     environment:
       APP_HOSTNAME: k8s.p4.greenpeace.org
       APP_HOSTPATH: defaultcontent
@@ -165,12 +156,11 @@ jobs:
       - run:
           name: Update docker-compose with the latest tag
           command: bash update_docker_compose.sh
-
   create-test-data:
-    <<: *defaults
+    !!merge <<: *defaults
     environment:
-      <<: *common_environment
-      <<: *develop_environment
+      !!merge <<: *common_environment
+      !!merge <<: *develop_environment
     steps:
       - checkout
       - attach_workspace:
@@ -180,34 +170,31 @@ jobs:
           command: run_bash_script_in_php_pod.sh ./generate-test-content.sh /tmp/workspace
       - store_artifacts:
           path: /tmp/workspace
-
 workflow_definitions:
   develop_common: &develop_common
     context: org-global
     filters:
       branches:
         only: main
-
 workflows:
   develop:
     jobs:
-    - build:
-        <<: *develop_common
-    - deploy:
-        <<: *develop_common
-        requires:
-          - build
-    - create-test-data:
-        <<: *develop_common
-        requires:
-          - deploy
-
+      - build:
+          !!merge <<: *develop_common
+      - deploy:
+          !!merge <<: *develop_common
+          requires:
+            - build
+      - create-test-data:
+          !!merge <<: *develop_common
+          requires:
+            - deploy
   create-default-sql:
     jobs:
-    - create-default-sql:
-        context: org-global
-        filters:
-          branches:
-            ignore: /.*/
-          tags:
-            only: /v.*/
+      - create-default-sql:
+          context: org-global
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /v.*/

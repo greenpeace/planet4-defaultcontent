@@ -19,7 +19,7 @@ sql:
 	CLOUDSQL_USER="$(CLOUDSQL_USER)" \
 	CLOUDSQL_PASSWORD="$(CLOUDSQL_PASSWORD)" \
 	SQL_TAG="$(SQL_TAG)" \
-	./sql_sync.sh
+	./bin/sql_sync.sh
 
 ###############################################################################
 

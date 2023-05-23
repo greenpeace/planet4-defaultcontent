@@ -18,7 +18,7 @@ echo ""
 echo "Replacing the previous sql version in the wp-env file with the latest one"
 echo ""
 CIRCLE_TAG_NUMBER=${CIRCLE_TAG#"v"}
-sed -i "s/db\": \".*./db\": \"${CIRCLE_TAG_NUMBER}\",/g" ${PROJECT_PATH}.wp-env.json
+sed -i "s/db\": \".*./db\": \"v${CIRCLE_TAG_NUMBER}\",/g" ${PROJECT_PATH}.wp-env.json
 
 echo ""
 echo "Commiting changes in the repository"

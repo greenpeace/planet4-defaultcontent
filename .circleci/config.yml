@@ -113,6 +113,9 @@ jobs:
       - run:
           name: Update docker-compose with the latest tag
           command: ./bin/update_docker_compose.sh
+      - run:
+          name: Update develop environment with the latest tag
+          command: ./bin/update_develop.sh
 
 workflow_definitions:
   develop_common: &develop_common

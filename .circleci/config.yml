@@ -111,9 +111,6 @@ jobs:
           name: Update nro-generator with the latest tag
           command: ./bin/update_nro_generator.sh
       - run:
-          name: Update docker-compose with the latest tag
-          command: ./bin/update_docker_compose.sh
-      - run:
           name: Update develop environment with the latest tag
           command: ./bin/update_develop.sh
 

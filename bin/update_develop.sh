@@ -23,8 +23,7 @@ sed -i "s/db\": \".*./db\": \"v${CIRCLE_TAG_NUMBER}\",/g" ${PROJECT_PATH}.p4-env
 echo ""
 echo "Commiting changes in the repository"
 echo ""
-git -C ${PROJECT_PATH} add ${PROJECT_PATH}.p4-env.json
-git -C ${PROJECT_PATH} commit -m "${CIRCLE_TAG} version of the sql to use" .wp-env.json
+git -C ${PROJECT_PATH} commit -m "${CIRCLE_TAG} version of the sql to use" .p4-env.json
 
 echo ""
 echo "Pushing changes"

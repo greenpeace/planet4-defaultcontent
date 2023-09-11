@@ -12,7 +12,7 @@ git config --global push.default simple
 echo ""
 echo "Cloning the {$PROJECT} repository"
 echo ""
-git clone https://github.com/greenpeace/${PROJECT}
+git clone git@github.com:greenpeace/${PROJECT}.git
 
 echo ""
 echo "Replacing the previous sql version in the reset script with the latest one"

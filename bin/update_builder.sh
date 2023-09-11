@@ -23,7 +23,7 @@ sed -i "s/CONTENT_DB_VERSION=\".*./CONTENT_DB_VERSION=\"${CIRCLE_TAG_NUMBER}\"/g
 echo ""
 echo "Commiting changes in the repository"
 echo ""
-git -C ${PROJECT_PATH} commit -m "${CIRCLE_TAG} version of the sql to use" .p4-env.json
+git -C ${PROJECT_PATH} commit -m "${CIRCLE_TAG} version of the sql to use" src/bin/reset_test_instance.sh
 
 echo ""
 echo "Pushing changes"

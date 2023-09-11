@@ -113,6 +113,9 @@ jobs:
       - run:
           name: Update develop environment with the latest tag
           command: ./bin/update_develop.sh
+      - run:
+          name: Update builder reset script with the latest tag
+          command: ./bin/update_builder.sh
 
 workflow_definitions:
   develop_common: &develop_common

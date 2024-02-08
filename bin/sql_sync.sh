@@ -41,11 +41,11 @@ gzip --test "content/planet4-defaultcontent_wordpress-${SQL_TAG}.sql.gz"
 echo ""
 echo "uploading to ${BUCKET_DESTINATION}/..."
 echo ""
-gsutil cp "content/planet4-defaultcontent_wordpress-${SQL_TAG}.sql.gz" "${BUCKET_DESTINATION}/"
+gcloud storage cp "content/planet4-defaultcontent_wordpress-${SQL_TAG}.sql.gz" "${BUCKET_DESTINATION}/"
 
-gsutil ls "${BUCKET_DESTINATION}/"
+gcloud storage ls "${BUCKET_DESTINATION}/"
 
 echo ""
 echo "Making the file readable"
 echo ""
-gsutil acl ch -u AllUsers:R "${BUCKET_DESTINATION}/planet4-defaultcontent_wordpress-${SQL_TAG}.sql.gz"
+gcloud storage buckets add-iam-policy-binding "${BUCKET_DESTINATION}/planet4-defaultcontent_wordpress-${SQL_TAG}.sql.gz" --member=allUsers --role=roles/storage.objectViewer

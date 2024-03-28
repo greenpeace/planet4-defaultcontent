@@ -48,4 +48,4 @@ gcloud storage ls "${BUCKET_DESTINATION}/"
 echo ""
 echo "Making the file readable"
 echo ""
-gcloud storage buckets add-iam-policy-binding "${BUCKET_DESTINATION}/planet4-defaultcontent_wordpress-${SQL_TAG}.sql.gz" --member=allUsers --role=roles/storage.objectViewer
+gcloud storage objects update "${BUCKET_DESTINATION}/planet4-defaultcontent_wordpress-${SQL_TAG}.sql.gz" --add-acl-grant=entity=AllUsers,role=READER

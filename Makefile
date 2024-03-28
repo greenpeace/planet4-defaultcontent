@@ -25,7 +25,7 @@ sql:
 
 .PHONY: stateless
 stateless:
-    gcloud storage rsync $(BUCKET_SOURCE) $(BUCKET_DESTINATION)/uploads/ --recursive --delete-unmatched-destination-objects
+	gcloud storage rsync $(BUCKET_SOURCE) $(BUCKET_DESTINATION)/uploads/ --recursive --delete-unmatched-destination-objects
 	@echo ""
 	@echo "Synchronising $(BUCKET_SOURCE) > $(BUCKET_DESTINATION)/uploads/ complete."
 	@echo ""

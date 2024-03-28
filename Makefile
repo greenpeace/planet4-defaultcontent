@@ -29,5 +29,5 @@ stateless:
 	@echo ""
 	@echo "Synchronising $(BUCKET_SOURCE) > $(BUCKET_DESTINATION)/uploads/ complete."
 	@echo ""
-	gcloud storage ls -L "${BUCKET_DESTINATION}/ | grep bytes"
+	gcloud storage ls -L "${BUCKET_DESTINATION}/"| grep bytes
 	@echo ""
